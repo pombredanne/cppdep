@@ -1,7 +1,6 @@
 language: python
 python:
     - 2.7
-    - 3.3
     - 3.4
     - 3.5
     - pypy
@@ -9,37 +8,18 @@ python:
 
 os: linux
 
-matrix:
-    include:
-        - os: osx
-          language: generic
-
-addons:
-    apt:
-        packages:
-            - graphviz  # OS X takes forever via brew.
-
 install:
-    - if [[ "${TRAVIS_OS_NAME}" == "osx" ]]; then
-        pip install nose;
-      elif [[ "${TRAVIS_PYTHON_VERSION}" == "2.7" ]]; then
+    - if [[ "${TRAVIS_PYTHON_VERSION}" == "2.7" ]]; then
         export RUN_COVERAGE=true;
-        pip install coverage codecov;
-      fi &&
-      pip install networkx pydotplus
-
-before_script:
-    - git clone --depth 1 --branch cppdep https://github.com/rakhimov/scram.git
+        pip install coverage codecov pytest-cov;
+        pip install yapf;
+      fi
+    - pip install -r requirements.txt
 
 script:
     - if [[ $RUN_COVERAGE == true ]]; then
-        cd scram &&
-        nosetests -w ../ --with-coverage --cover-package=../graph.py test/ &&
-        coverage run --append --source=../ ../cppdep.py && codecov;
+        python -m pytest --cov=cppdep --cov=graph --cov-config .coveragerc && codecov;
+        yapf -d cppdep/*.py;
       else
-        nosetests test/ && cd scram && ../cppdep.py;
-      fi &&
-      if [[ ! "${TRAVIS_OS_NAME}" == "osx" ]]; then
-        echo "Generating graph images from DOT.";
-        dot -T pdf -O ./*.dot;
+        python -m pytest;
       fi

@@ -1,0 +1,36 @@
+# Note that 'map' and 'seq' are implicit types.
+map:
+    internal:  # A list of package groups for analysis.
+        required: True
+        seq: &Groups
+            - map:
+                name:  # The unique name of a package group.
+                    required: True
+                    type: str
+                path:  # The root path for the packages in the group.
+                    required: True
+                    type: str
+                packages:  # A list of member packages.
+                    required: True
+                    seq:  # Note: all paths are relative to the group path.
+                        - map:
+                            name:  # Unique package name within the group.
+                                required: True
+                                type: str
+                            src:  # Paths to source files to analyze.
+                                seq:
+                                    - type: str  # glob pattern
+                            ignore:  # Paths to exclude from the source.
+                                seq:
+                                    - type: str  # glob pattern
+                            include:  # Header search paths, i.e., '-i'.
+                                seq:
+                                    - type: str
+                            alias:  # Alias paths to map to a name upon include.
+                                seq:
+                                    - type: str
+                            pattern:  # Include processing w/o header search.
+                                seq:  # Meaningful only for external packages.
+                                    - type: str  # Regex pattern for include.
+    external:  # External package groups (not analyzed but searched for headers/components).
+        seq: *Groups

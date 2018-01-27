@@ -17,24 +17,13 @@
 
 |
 
-``cppdep`` performs dependency analyses
+``cppdep`` performs dependency analysis
 among components/packages/package groups of a large C/C++ project.
 This is a rewrite of ``dep_utils(adep/cdep/ldep)``,
 which is provided by John Lakos' book
 "Large-Scale C++ Software Design", Addison Wesley (1996).
 
-.. |logo| image:: cppdep_small.png
-
-
-Differences from dep_utils
-==========================
-
-- Rewrite in Python, unifying ``adep/cdep/ldep`` into one tool.
-- Project analysis configuration with an XML file.
-- Remove file alias support
-  since the file name length limitation is much more relaxed than it was 20 years ago.
-- Support for multiple package groups and packages
-- Support for exporting final dependency graph to Graphviz dot format.
+.. |logo| image:: logo.png
 
 
 Limitations
@@ -46,97 +35,59 @@ Limitations
   such as dynamic loading and configurable internal services.
 - Preprocessing or macro expansion is not performed.
   Dependency inclusion via preprocessor *meta-programming* is not handled.
+- Dependency exclusion with C style multi-line comments or macros
+  is not respected.
 
 
 Requirements
 ============
 
-#. Python 2.7 / 3.3+
+#. Python 2.7 or 3.4+
 #. `NetworkX <http://networkx.lanl.gov/>`_
+#. pydot
 #. pydotplus
-#. (Optional) `Graphviz <http://www.graphviz.org/>`_
-#. (Optional) `xdot <https://github.com/jrfonseca/xdot.py>`_
+#. PyYAML
+#. PyKwalify 1.6.0+
 
 The dependencies can be installed with ``pip``.
 
 .. code-block:: bash
 
-    $ sudo pip install networkx pydotplus
+    $ sudo pip install -r requirements.txt
 
 
 Installation
 ============
 
+From the source:
+
+.. code-block:: bash
+
+    $ ./setup.py install
+
 The latest stable release from PyPi:
 
 .. code-block:: bash
 
-    $ sudo pip install cppdep
+    $ pip install cppdep
 
 
 Usage
 =====
 
-Create an XML configuration file
-that describes the project.
-``config_example.xml`` and ``config_schema.rng`` are given for guidance.
+Create a configuration file
+that describes the project for analysis.
+``config_schema.yml`` is given for guidance.
 
 In the root directory of the project with the configuration file,
 run the following command to generate dependency analysis reports and graphs.
 
 .. code-block:: bash
 
-    $ cppdep -c /path/to/config/xml
+    $ cppdep -c /path/to/config/file
 
-
-Graph to Image Conversion
-=========================
-
-To view the generated graph dot files without converting to other formats.
-
-.. code-block:: bash
-
-    $ xdot graph.dot
-
-Here's how to convert a Graphviz dot file to PDF format.
-
-.. code-block:: bash
-
-    $ dot -Tpdf graph1.dot -o graph1.pdf
-
-Apply ``-O`` flag to automatically generate output file names from the input file names.
-
-.. code-block:: bash
-
-    $ dot -T pdf graph1.dot -O  # The output file is graph1.dot.pdf
-
-To run ``dot`` on files in directories and sub-directories recursively.
-
-.. code-block:: bash
-
-    $ find -type f -name "*.dot" directory_path | xargs dot -Tpdf -O
-
-To create output file names without ``.dot`` in the name.
-
-.. code-block:: bash
-
-    $ find -type f -name "*.dot" directory_path -exec sh -c 'dot -Tpdf "${0}" -o "${0%.*}.pdf"' {} \;
-
-
-External links
-==============
-
-#. The last known location of John Lakos' ``dep_utils`` source code:
-   http://www-numi.fnal.gov/computing/d120/releases/R2.2/Dependency/
-
-#. Experimental packaging of ``dep_utils`` source code:
-   https://sourceforge.net/projects/introspector/files/lsc-large-scale-c/first-release/
-
-#. `The discussion on C++ project dependency analysis <http://stackoverflow.com/questions/1137480/visual-c-project-dependency-analysis>`_
-
-#. `Nmdepend <http://sourceforge.net/projects/nmdepend/>`_,
-   a lightweight 'link-time' dependency analyzer for C++
-   using object files and libraries instead of source-code as input.
+More documentation and example configurations
+can be found in project `wiki <https://github.com/rakhimov/cppdep/wiki>`_.
 
 
 Acknowledgments

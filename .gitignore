@@ -1,1 +1,6 @@
 *.pyc
+.cache
+.coverage
+htmlcov
+dist
+*.egg-info
